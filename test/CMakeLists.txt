@@ -1,0 +1,6 @@
+enable_testing()
+add_executable(extra_protocol_test)
+target_sources(extra_protocol_test PRIVATE protocol_test.cpp)
+target_link_libraries(extra_protocol_test PRIVATE extra_protocol PRIVATE GTest::gtest_main)
+include(GoogleTest)
+gtest_discover_tests(extra_protocol_test)

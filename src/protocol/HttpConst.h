@@ -11,12 +11,12 @@ enum class Version
 };
 
 template <Version>
-static inline std::string_view VersionString;
+constexpr inline std::string_view VersionString;
 
-template <> static inline std::string_view VersionString<Version::_1_0> = "HTTP/1.0";
-template <> static inline std::string_view VersionString<Version::_1_1> = "HTTP/1.1";
-template <> static inline std::string_view VersionString<Version::_2> = "HTTP/2";
-template <> static inline std::string_view VersionString<Version::_3> = "HTTP/3";
+template <> constexpr inline std::string_view VersionString<Version::_1_0> = "HTTP/1.0";
+template <> constexpr inline std::string_view VersionString<Version::_1_1> = "HTTP/1.1";
+template <> constexpr inline std::string_view VersionString<Version::_2> = "HTTP/2";
+template <> constexpr inline std::string_view VersionString<Version::_3> = "HTTP/3";
 
 enum class Method
 {
@@ -31,16 +31,16 @@ enum class Method
 };
 
 template <Method>
-static inline std::string_view MethodString;
+constexpr inline std::string_view MethodString;
 
-template <> static inline std::string_view MethodString<Method::Connect> = "CONNECT";
-template <> static inline std::string_view MethodString<Method::Delete> = "DELETE";
-template <> static inline std::string_view MethodString<Method::Get> = "GET";
-template <> static inline std::string_view MethodString<Method::Head> = "HEAD";
-template <> static inline std::string_view MethodString<Method::Options> = "OPTIONS";
-template <> static inline std::string_view MethodString<Method::Post> = "POST";
-template <> static inline std::string_view MethodString<Method::Put> = "PUT";
-template <> static inline std::string_view MethodString<Method::Trace> = "TRACE";
+template <> constexpr inline std::string_view MethodString<Method::Connect> = "CONNECT";
+template <> constexpr inline std::string_view MethodString<Method::Delete> = "DELETE";
+template <> constexpr inline std::string_view MethodString<Method::Get> = "GET";
+template <> constexpr inline std::string_view MethodString<Method::Head> = "HEAD";
+template <> constexpr inline std::string_view MethodString<Method::Options> = "OPTIONS";
+template <> constexpr inline std::string_view MethodString<Method::Post> = "POST";
+template <> constexpr inline std::string_view MethodString<Method::Put> = "PUT";
+template <> constexpr inline std::string_view MethodString<Method::Trace> = "TRACE";
 
 enum class Status
 {
@@ -48,10 +48,10 @@ enum class Status
 };
 
 template <Status>
-static inline std::string_view StatusString;
+constexpr inline std::string_view StatusString;
 
-template <> static inline std::string_view StatusString<Status::_200> = "200";
+template <> constexpr inline std::string_view StatusString<Status::_200> = "200";
 
-static inline std::string_view CRLF = "\r\n";
+constexpr inline std::string_view CRLF = "\r\n";
 
 }

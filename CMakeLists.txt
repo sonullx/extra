@@ -12,4 +12,5 @@ target_compile_features(extra_basic INTERFACE cxx_std_17)
 target_compile_features(extra_basic INTERFACE c_std_11)
 
 add_subdirectory(src)
+add_subdirectory(3rd)
 add_subdirectory(test)

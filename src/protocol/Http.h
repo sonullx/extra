@@ -21,7 +21,7 @@ class HttpRequest<Version::_1_0> : public Request
 {
 public:
 	constexpr static Version version = Version::_1_0;
-	constexpr static std::string_view & version_string = VersionString<version>;
+	constexpr static std::string_view version_string = VersionString<version>;
 
 	template <Method m>
 	void set_method()
