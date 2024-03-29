@@ -52,6 +52,8 @@ constexpr inline std::string_view StatusString;
 
 template <> constexpr inline std::string_view StatusString<Status::_200> = "200";
 
+constexpr inline char CR = '\r';
+constexpr inline char LF = '\n';
 constexpr inline std::string_view CRLF = "\r\n";
 
 }

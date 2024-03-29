@@ -11,7 +11,7 @@ class Request
 
 class Response
 {
-	virtual std::string_view parse(std::string_view) = 0;
+	virtual bool parse(std::string_view &) = 0;
 };
 
 }
