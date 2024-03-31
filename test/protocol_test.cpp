@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "extra/Http.h"
+#include "extra/HttpV1D0.h"
 
 TEST(HttpV1D0, RequestFormat_0)
 {
@@ -7,56 +7,30 @@ TEST(HttpV1D0, RequestFormat_0)
 	HttpRequestV1D0 req;
 	req.set_method<Method::Get>();
 	req.set_uri("/test");
-	req.set_header("hello", "world");
-	req.set_body("The quick brown fox jumps over the lazy dog.");
-
-	std::string expected_1 =
-		"GET /test HTTP/1.0\r\n"
-		"hello: world\r\n"
-		"Content-Length: 44\r\n"
-		"\r\n"
-		"The quick brown fox jumps over the lazy dog.";
-	std::string expected_2 =
-		"GET /test HTTP/1.0\r\n"
-		"Content-Length: 44\r\n"
-		"hello: world\r\n"
-		"\r\n"
-		"The quick brown fox jumps over the lazy dog.";
-
 	auto actual = req.format();
-	EXPECT_TRUE(actual == expected_1 || actual == expected_2);
+	std::string expected =
+		"GET /test HTTP/1.0\r\n"
+		"\r\n";
+
+	EXPECT_EQ(actual, expected);
 }
 
 TEST(HttpV1D0, RequestFormat_1)
 {
-	std::string actual;
-	std::string expected;
-
 	using namespace extra::protocol::http;
 	HttpRequestV1D0 req;
 	req.set_method<Method::Get>();
 	req.set_uri("/test");
-
-	expected =
+	req.append_header("hello", "world");
+	req.set_body_at_last("The quick brown fox jumps over the lazy dog.");
+	auto actual = req.format();
+	std::string expected =
 		"GET /test HTTP/1.0\r\n"
-		"\r\n";
-	actual = req.format();
-	EXPECT_EQ(actual, expected);
-
-	req.set_body("The quick brown fox jumps over the lazy dog.");
-	expected =
-		"GET /test HTTP/1.0\r\n"
+		"hello: world\r\n"
 		"Content-Length: 44\r\n"
 		"\r\n"
 		"The quick brown fox jumps over the lazy dog.";
-	actual = req.format();
-	EXPECT_EQ(actual, expected);
 
-	req.set_body("");
-	expected =
-		"GET /test HTTP/1.0\r\n"
-		"\r\n";
-	actual = req.format();
 	EXPECT_EQ(actual, expected);
 }
 

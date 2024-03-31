@@ -1,24 +1,20 @@
 
 #include <sstream>
-#include "Http.h"
+#include "HttpV1D0.h"
 
 namespace extra::protocol::http
 {
 std::string HttpRequest<Version::_1_0>::format() const
 {
 	std::ostringstream oss;
-	oss << method << " " << uri << " " << version << CRLF;
-	for (const auto & [key, value]: headers)
-		oss << key << ": " << value << CRLF;
-
-	oss << CRLF;
-	oss << body;
+	oss << method << " " << uri << " " << version << CRLF << headers << CRLF << body;
 	return oss.str();
 }
 
 HttpResponse<Version::_1_0>::HttpResponse()
 	: version{}, status{}, phrase{}, headers{}, body{}
-	, line{}, key{}, content_length{static_cast<size_t>(-1)}, parsing{ParsingStatusLine}, next_parsing{ParsingStatusLine}
+	, line{}, key{}, content_length{static_cast<size_t>(-1)}, parsing{ParsingStatusLine}, next_parsing{
+		ParsingStatusLine}
 {
 	line.reserve(line_initial_capacity);
 }
