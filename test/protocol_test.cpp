@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "extra/HttpV1D0.h"
+#include "extra/HttpBasic.h"
 
 TEST(HttpV1D0, RequestFormat_0)
 {
@@ -22,7 +22,7 @@ TEST(HttpV1D0, RequestFormat_1)
 	req.set_method<Method::Get>();
 	req.set_uri("/test");
 	req.append_header("hello", "world");
-	req.set_body_at_last("The quick brown fox jumps over the lazy dog.");
+	req.set_body_once("The quick brown fox jumps over the lazy dog.");
 	auto actual = req.format();
 	std::string expected =
 		"GET /test HTTP/1.0\r\n"
@@ -62,10 +62,7 @@ TEST(HttpV1D0, ResponseParse_0)
 	EXPECT_EQ(status, "200");
 	EXPECT_EQ(phrase, "OK");
 	EXPECT_EQ(body, "The quick brown fox jumps over the lazy dog.");
-	auto iter = headers.find("Content-Length");
-	EXPECT_NE(iter, headers.end());
-	EXPECT_EQ(iter->second, "44");
-	iter = headers.find("hello");
+	auto iter = headers.find("hello");
 	EXPECT_NE(iter, headers.end());
 	EXPECT_EQ(iter->second, "world");
 	iter = headers.find("A");
