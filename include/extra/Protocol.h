@@ -7,27 +7,40 @@ namespace extra::protocol
 
 enum class State : int
 {
-	Unknown,
+	Unknown = 0,
 	Success,
 	SystemError,
 	NetworkError,
-	Last,
+	LAST,
 };
 
-enum Error : int
+enum class Error : int
 {
-	NoError,
+	NoError = 0,
+	NoConnection,
 	Timeout,
 	ParseError,
+	LAST,
 };
 
 class Request
 {
+public:
+	Request() = default;
+
+	virtual ~Request() = default;
+
 	[[nodiscard]] virtual std::string format() const = 0;
+
 };
 
 class Response
 {
+public:
+	Response() = default;
+
+	virtual ~Response() = default;
+
 	virtual bool parse(std::string_view &) = 0;
 
 	/*

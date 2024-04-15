@@ -30,7 +30,7 @@ void poller_del(int fd, poller_t * poller);
 
 void poller_go(poller_t * poller);
 
-int poller_mark(int ack, int timeout, handle_t * handle, poller_t * poller);
+int poller_mark(int ack_mark, int timeout, handle_t * handle, poller_t * poller);
 
 #ifdef __cplusplus
 }
