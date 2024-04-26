@@ -26,7 +26,7 @@ private:
 		size_t mark;
 		size_t cell_size;
 		size_t capacity;
-		int state_;
+		int state;
 	};
 
 	alignas(util::cache_line_size) size_t last;
@@ -59,7 +59,7 @@ public:
 	{
 		int expected = state_available;
 		int desired = state_not_available;
-		std::atomic_ref s{state_};
+		std::atomic_ref s{state};
 		if (!s.compare_exchange_strong(expected, desired, std::memory_order::acq_rel))
 			return false;
 
@@ -74,7 +74,7 @@ public:
 
 	bool check(size_t mark_, size_t content_size_)
 	{
-		return std::atomic_ref{state_}.load(std::memory_order::acquire) == state_available
+		return std::atomic_ref{state}.load(std::memory_order::acquire) == state_available
 		       && mark == mark_
 		       && cell_size == calculate_cell_size(content_size_);
 	}
