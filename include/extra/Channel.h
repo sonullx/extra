@@ -108,7 +108,7 @@ public:
 				next_of(current_last).compare_exchange_strong(expected_next, index, std::memory_order::acq_rel)
 				? index : expected_next;
 
-			// CAS 2. Advance last. If process crushes here, other process calling append() will fix it.
+			// CAS 2. Advance last. If process crashes here, other process calling append() will fix it.
 			// Succeed or fail, we got a better last, again. Will use it in next loop if necessary.
 			current_last =
 				l.compare_exchange_strong(current_last, advanced_last, std::memory_order::acq_rel)
@@ -244,6 +244,11 @@ protected:
 	};
 
 public:
+	explicit operator bool() const
+	{
+		return index != 0;
+	}
+
 	T * operator->()
 	{
 		return content;
@@ -280,7 +285,8 @@ public:
 
 	~ChannelWriteIterator()
 	{
-		Base::layout->append(index);
+		if (*this)
+			Base::layout->append(Base::index);
 	}
 };
 
