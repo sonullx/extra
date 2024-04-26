@@ -1,29 +1,8 @@
-
-#include <sstream>
-#include "Http.h"
+#include "HttpBasic.h"
 
 namespace extra::protocol::http
 {
-std::string HttpRequest<Version::_1_0>::format() const
-{
-	std::ostringstream oss;
-	oss << method << " " << uri << " " << version << CRLF;
-	for (const auto & [key, value]: headers)
-		oss << key << ": " << value << CRLF;
-
-	oss << CRLF;
-	oss << body;
-	return oss.str();
-}
-
-HttpResponse<Version::_1_0>::HttpResponse()
-	: version{}, status{}, phrase{}, headers{}, body{}
-	, line{}, key{}, content_length{static_cast<size_t>(-1)}, parsing{ParsingStatusLine}, next_parsing{ParsingStatusLine}
-{
-	line.reserve(line_initial_capacity);
-}
-
-bool HttpResponse<Version::_1_0>::parse(std::string_view & raw)
+bool HttpResponseBasic::parse(std::string_view & raw)
 {
 	bool good = true;
 	while (good && !raw.empty())
@@ -50,12 +29,12 @@ bool HttpResponse<Version::_1_0>::parse(std::string_view & raw)
 	return good;
 }
 
-bool HttpResponse<Version::_1_0>::parse_lf(std::string_view & raw)
+bool HttpResponseBasic::parse_lf(std::string_view & raw)
 {
 	if (raw.front() == LF)
 	{
 		raw.remove_prefix(1);
-		parsing = next_parsing;
+		parsing = will_parse;
 		return true;
 	}
 	else
@@ -65,7 +44,7 @@ bool HttpResponse<Version::_1_0>::parse_lf(std::string_view & raw)
 /**
  * @return false if buffer has become too large before found CRLF, or cannot split status line to 3 parts
  */
-bool HttpResponse<Version::_1_0>::parse_status_line(std::string_view & raw)
+bool HttpResponseBasic::parse_status_line(std::string_view & raw)
 {
 	auto pos = std::min(raw.find(CR), raw.size());
 	if (line.size() + pos > status_line_length_limit)
@@ -105,12 +84,12 @@ bool HttpResponse<Version::_1_0>::parse_status_line(std::string_view & raw)
 	phrase = sv;
 
 	line.clear();
-	next_parsing = ParsingHeader;
+	will_parse = ParsingHeader;
 
 	return true;
 }
 
-bool HttpResponse<Version::_1_0>::parse_header(std::string_view & raw)
+bool HttpResponseBasic::parse_header(std::string_view & raw)
 {
 	auto pos = std::min(raw.find(CR), raw.size());
 	if (line.size() + pos > header_length_limit)
@@ -127,7 +106,7 @@ bool HttpResponse<Version::_1_0>::parse_header(std::string_view & raw)
 	if (line.empty())
 	{
 		body.reserve(body_initial_capacity);
-		next_parsing = ParsingBody;
+		will_parse = ParsingBody;
 		return true;
 	}
 
@@ -162,9 +141,9 @@ bool HttpResponse<Version::_1_0>::parse_header(std::string_view & raw)
 	return true;
 }
 
-bool HttpResponse<Version::_1_0>::parse_body(std::string_view & raw)
+bool HttpResponseBasic::parse_body(std::string_view & raw)
 {
-	if (content_length == static_cast<size_t>(-1))
+	if (content_length == content_length_unknown)
 	{
 		if (const auto iter = headers.find("Content-Length"); iter != headers.end())
 		{
@@ -177,8 +156,11 @@ bool HttpResponse<Version::_1_0>::parse_body(std::string_view & raw)
 			content_length = l;
 		}
 		else
-			content_length = static_cast<size_t>(-2);
+			content_length = content_length_unlimited;
 	}
+
+	if (content_length < body.size())
+		return false;
 
 	auto pos = std::min(raw.size(), content_length - body.size());
 	if (body.size() + pos > body_length_limit)
@@ -188,4 +170,5 @@ bool HttpResponse<Version::_1_0>::parse_body(std::string_view & raw)
 	raw.remove_prefix(pos);
 	return true;
 }
+
 }
