@@ -15,8 +15,19 @@ public:
 	};
 };
 
-constexpr static inline size_t length = 1024 * 1024;
+constexpr static inline size_t capacity = 1024 * 1024;
+using namespace extra::kernel;
 
-TEST(Shm, T0)
+TEST(Channel, T0)
 {
+	using CO = Channel<Order>;
+	std::string name = "T0_Order";
+	unsigned long version = 0x10101010;
+
+	CO holder{name, version, capacity};
+	EXPECT_TRUE(holder.create());
+
+	CO reader{name, version, capacity};
+	EXPECT_FALSE(reader.create());
+	EXPECT_TRUE(reader.attach());
 }

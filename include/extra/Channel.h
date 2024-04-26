@@ -173,7 +173,7 @@ public:
 			if (auto size = ChannelLayout::total_size(content_size, capacity);
 				ftruncate(fd, static_cast<off_t>(size)) != -1)
 			{
-				if (auto p = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0); p != MAP_FAILED)
+				if (auto p = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0); p != MAP_FAILED)
 				{
 					close(fd);
 					if (auto layout = reinterpret_cast<ChannelLayout *>(p);
@@ -199,7 +199,7 @@ public:
 			if (struct stat st{}; fstat(fd, &st) != -1)
 			{
 				auto size = static_cast<size_t>(st.st_size);
-				if (auto p = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0); p != MAP_FAILED)
+				if (auto p = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0); p != MAP_FAILED)
 				{
 					close(fd);
 					if (auto layout = reinterpret_cast<ChannelLayout *>(p); layout->check(mark, content_size))
