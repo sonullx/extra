@@ -7,6 +7,7 @@
 
 #include "Protocol.h"
 #include "HttpConst.h"
+#include "HttpHeader.h"
 
 namespace extra::protocol::http
 {
@@ -22,7 +23,7 @@ private:
 public:
 	HttpRequestBasic() = default;
 
-	~HttpRequestBasic() = default;
+	~HttpRequestBasic () override = default;
 
 	template <Method m>
 	void set_method()
@@ -211,6 +212,11 @@ public:
 		: HttpRequestBasic()
 	{
 		HttpRequestBasic::set_version<Version::_1_1>();
+	}
+
+	void set_keep_alive()
+	{
+		append_header("Connection", "Keep-Alive");
 	}
 };
 
