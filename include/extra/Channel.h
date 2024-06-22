@@ -241,7 +241,7 @@ protected:
 	{
 		index = index_;
 		content = reinterpret_cast<T *>(layout->content(index));
-	};
+	}
 
 public:
 	T * operator->()
@@ -280,7 +280,7 @@ public:
 
 	~ChannelWriteIterator()
 	{
-		Base::layout->append(index);
+		Base::layout->append(this->index);
 	}
 };
 
@@ -299,16 +299,16 @@ public:
 
 	void reset()
 	{
-		update(Base::layout->first());
+		this->update(Base::layout->first());
 	}
 
 	bool next()
 	{
-		auto n = Base::layout->next(index);
+		auto n = Base::layout->next(this->index);
 		if (n == Layout::null_index)
 			return false;
 
-		update(n);
+		this->update(n);
 		return true;
 	}
 };

@@ -40,6 +40,7 @@
 *.pdb
 *.mod*
 *.cmd
+build/
 .tmp_versions/
 modules.order
 Module.symvers
